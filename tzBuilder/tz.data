@@ -1,0 +1,148 @@
+UTC	Coordinated Universal Time	UTC
+WET	Western European Time	UTC
+CET	Central European Time	UTC+01
+IRLT	Irish Standard Time	UTC+01
+WAT	West Africa Time	UTC+01
+CAT	Central Africa Time	UTC+02
+EET	Eastern European Time	UTC+02
+IST	Israel Standard Time	UTC+02
+SAST	South African Standard Time	UTC+02
+USZ1	Kaliningrad Time	UTC+02
+ARST	Arabia Standard Time	UTC+03
+EAT	East Africa Time	UTC+03
+FET	Further-eastern European Time	UTC+03
+IOT	Indian Ocean Time	UTC+03
+MSK	Moscow Time	UTC+03
+SYOT	Showa Station Time	UTC+03
+IRST	Iran Standard Time	UTC+03:30
+AMT	Armenia Time	UTC+04
+AZT	Azerbaijan Time	UTC+04
+GET	Georgia Standard Time	UTC+04
+GST	Gulf Standard Time	UTC+04
+MUT	Mauritius Time	UTC+04
+RET	Réunion Time	UTC+04
+SAMT	Samara Time	UTC+04
+SCT	Seychelles Time	UTC+04
+VOLT	Volgograd Time	UTC+04
+AFT	Afghanistan Time	UTC+04:30
+HMT	Heard and McDonald Islands Time	UTC+05
+MAWT	Mawson Station Time	UTC+05
+MVT	Maldives Time	UTC+05
+ORAT	Oral Time	UTC+05
+PKT	Pakistan Standard Time	UTC+05
+TFT	Indian/Kerguelen	UTC+05
+TJT	Tajikistan Time	UTC+05
+TMT	Turkmenistan Time	UTC+05
+UZT	Uzbekistan Time	UTC+05
+YEKT	Yekaterinburg Time	UTC+05
+INST	Indian Standard Time	UTC+05:30
+SLST	Sri Lanka Time	UTC+05:30
+NPT	Nepal Time	UTC+05:45
+BIOT	British Indian Ocean Time	UTC+06
+BST	Bangladesh Standard Time	UTC+06
+BTT	Bhutan Time	UTC+06
+KGT	Kyrgyzstan time	UTC+06
+OMST	Omsk Time	UTC+06
+VOST	Vostok Station Time	UTC+06
+CCT	Cocos Islands Time	UTC+06:30
+MMT	Myanmar Time	UTC+06:30
+CXT	Christmas Island Time	UTC+07
+DAVT	Davis Time	UTC+07
+HOVT	Khovd Time	UTC+07
+ICT	Indochina Time	UTC+07
+KRAT	Krasnoyarsk Time	UTC+07
+THA	Thailand Standard Time	UTC+07
+WIT	Western Indonesian Time	UTC+07
+ACT	ASEAN Common Time	UTC+08
+AWST	Australian Western Standard Time	UTC+08
+BDT	Brunei Time	UTC+08
+CHOT	Choibalsan	UTC+08
+CIT	Central Indonesia Time	UTC+08
+CT	China time	UTC+08
+HKT	Hong Kong Time	UTC+08
+IRKT	Irkutsk Time	UTC+08
+MYT	Malaysia Time	UTC+08
+PHST	Philippine Standard Time	UTC+08
+SGT	Singapore Time	UTC+08
+ULAT	Ulaanbaatar Time	UTC+08
+WST	Western Standard Time	UTC+08
+EIT	Eastern Indonesian Time	UTC+09
+JST	Japan Standard Time	UTC+09
+KST	Korea Standard Time	UTC+09
+TLT	Timor Leste Time	UTC+09
+YAKT	Yakutsk Time	UTC+09
+ACST	Australian Central Standard Time	UTC+09:30
+AEST	Australian Eastern Standard Time	UTC+10
+ChST	Chamorro Standard Time	UTC+10
+CHUT	Chuuk Time	UTC+10
+DDUT	Dumont d'Urville Time	UTC+10
+PGT	Papua New Guinea Time	UTC+10
+VLAT	Vladivostok Time	UTC+10
+LHST	Lord Howe Standard Time	UTC+10:30
+KOST	Kosrae Time	UTC+11
+MIST	Macquarie Island Station Time	UTC+11
+NCT	New Caledonia Time	UTC+11
+PONT	Pohnpei Standard Time	UTC+11
+SAKT	Sakhalin Island time	UTC+11
+SBT	Solomon Islands Time	UTC+11
+SRET	Srednekolymsk Time	UTC+11
+VUT	Vanuatu Time	UTC+11
+NFT	Norfolk Time	UTC+11:30
+FJT	Fiji Time	UTC+12
+GILT	Gilbert Island Time	UTC+12
+MAGT	Magadan Time	UTC+12
+MHT	Marshall Islands	UTC+12
+NZST	New Zealand Standard Time	UTC+12
+PETT	Kamchatka Time	UTC+12
+TVT	Tuvalu Time	UTC+12
+WAKT	Wake Island Time	UTC+12
+CHAST	Chatham Standard Time	UTC+12:45
+PHOT	Phoenix Island Time	UTC+13
+TKT	Tokelau Time	UTC+13
+TOT	Tonga Time	UTC+13
+LINT	Line Islands Time	UTC+14
+AZOST	Azores Standard Time	UTC-01
+CVT	Cape Verde Time	UTC-01
+EGT	Eastern Greenland Time	UTC-01
+FNT	Fernando de Noronha Time	UTC-02
+SGST	South Georgia and the South Sandwich Islands	UTC-02
+ART	Argentina Time	UTC-03
+BRT	Brasilia Time	UTC-03
+FKST	Falkland Islands Standard Time	UTC-03
+GFT	French Guiana Time	UTC-03
+PMST	Saint Pierre and Miquelon Standard Time	UTC-03
+ROTT	Rothera Research Station Time	UTC-03
+SRT	Suriname Time	UTC-03
+UYT	Uruguay Standard Time	UTC-03
+NT	Newfoundland Time	UTC-03:30
+AMZT	Amazon Time	UTC-04
+AST	Atlantic Standard Time	UTC-04
+BOT	Bolivia Time	UTC-04
+CLT	Chile Standard Time	UTC-04
+COST	Colombia Summer Time	UTC-04
+ECT	Eastern Caribbean Time UTC-04
+FKT	Falkland Islands Time	UTC-04
+GYT	Guyana Time	UTC-04
+PYT	Paraguay Time	UTC-04
+VET	Venezuelan Standard Time	UTC-04:30
+COT	Colombia Time	UTC-05
+CUST	Cuba Standard Time	UTC-05
+ECUT	Ecuador Time	UTC-05
+EST	Eastern Standard Time	UTC-05
+PET	Peru Time	UTC-05
+CST	Central Standard Time	UTC-06
+EAST	Easter Island Standard Time	UTC-06
+GALT	Galapagos Time	UTC-06
+MST	Mountain Standard Time	UTC-07
+CIST	Clipperton Island Standard Time	UTC-08
+PST	Pacific Standard Time	UTC-08
+AKST	Alaska Standard Time	UTC-09
+GIT	Gambier Island Time	UTC-09
+MART	Marquesas Islands Time	UTC-09:30
+CKT	Cook Island Time	UTC-10
+HAST	Hawaii-Aleutian Standard Time	UTC-10
+HST	Hawaii Standard Time	UTC-10
+TAHT	Tahiti Time	UTC-10
+NUT	Niue Time	UTC-11
+SST	Samoa Standard Time	UTC-11
+BIT	Baker Island Time	UTC-12
