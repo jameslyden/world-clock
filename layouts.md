@@ -10,7 +10,7 @@ Template
 +----------------+ +----------------+
 
 +----------------+ +----------------+
-|-hh:mm   -hh:mm | |-hh:mm  -hh:mm  |  Alternate View
+|-hh:mm  -hh:mm  | |-hh:mm  -hh:mm  |  Alternate View
 | TZNAME3 TZNAME4| | TZNAME5 TZNAME6|
 +----------------+ +----------------+
 ```
