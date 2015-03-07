@@ -50,7 +50,7 @@ for linenum in $(seq 1 $len); do
 		EOL=","
 		for tz in $(seq 0 $index); do
 			if [[ $tz -eq $index ]]; then EOL=" };"; fi
-			printf "  %d%s\n" "${h_off[$tz]}" "$EOL";
+			printf "  %d%s\t// %s\n" "${h_off[$tz]}" "$EOL", "${abbrs[$tz]}";
 		done
 		printf "\n"
 		
@@ -59,6 +59,7 @@ for linenum in $(seq 1 $len); do
 		EOL=","
 		for tz in $(seq 0 $index); do
 			if [[ $tz -eq $index ]]; then EOL=" };"; fi
+			printf "  %d%s\t// %s\n" "${m_off[$tz]}" "$EOL", "${abbrs[$tz]}";
 			printf "  %d%s\n" "${m_off[$tz]}" "$EOL";
 		done
 		printf "\n"
@@ -70,14 +71,16 @@ for linenum in $(seq 1 $len); do
 		EOL=","
 		for tz in $(seq 0 $index); do
 			if [[ $tz -eq $index ]]; then EOL=" };"; fi
-			printf "  DS_NONE%s\n" "$EOL";
+			printf "  DS_NONE%s\t// %s\n" "$EOL" "${abbrs[$tz]}";
 		done
 		printf "\n"
 		printf "// the first entry in each DS_* table represent impossible values"
 		printf " to ensure DS_NONE has no effect.\n"
 		printf "const byte DS_SMON[] = {\n  99 };\n\n"
+		printf "const byte DS_SWEEK[] = {\n  99 };\n\n"
 		printf "const byte DS_SDOW[] = {\n  99 };\n\n"
 		printf "const byte DS_FMON[] = {\n  99 };\n\n"
+		printf "const byte DS_SWEEK[] = {\n  99 };\n\n"
 		printf "const byte DS_FDOW[] = {\n  99 };\n\n"
 
 	fi
