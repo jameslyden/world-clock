@@ -32,7 +32,7 @@ for linenum in $(seq 1 $len); do
 		EOL=","
 		for tz in $(seq 0 $index); do
 			if [[ $tz -eq $index ]]; then EOL=" };"; fi
-			printf "  \"%s\"%s\n" "${names[$tz]}" "$EOL";
+			printf "  \"%s\"%s\n" "${names[$tz]}" "$EOL"
 		done
 		printf "\n"
 		
@@ -41,7 +41,7 @@ for linenum in $(seq 1 $len); do
 		EOL=","
 		for tz in $(seq 0 $index); do
 			if [[ $tz -eq $index ]]; then EOL=" };"; fi
-			printf "  \"%s\"%s\n" "${abbrs[$tz]}" "$EOL";
+			printf "  \"%s\"%s\n" "${abbrs[$tz]}" "$EOL"
 		done
 		printf "\n"
 		
@@ -50,7 +50,7 @@ for linenum in $(seq 1 $len); do
 		EOL=","
 		for tz in $(seq 0 $index); do
 			if [[ $tz -eq $index ]]; then EOL=" };"; fi
-			printf "  %d%s\t// %s\n" "${h_off[$tz]}" "$EOL", "${abbrs[$tz]}";
+			printf "  %d%s\t// %s\n" "${h_off[$tz]}" "$EOL" "${abbrs[$tz]}"
 		done
 		printf "\n"
 		
@@ -59,8 +59,7 @@ for linenum in $(seq 1 $len); do
 		EOL=","
 		for tz in $(seq 0 $index); do
 			if [[ $tz -eq $index ]]; then EOL=" };"; fi
-			printf "  %d%s\t// %s\n" "${m_off[$tz]}" "$EOL", "${abbrs[$tz]}";
-			printf "  %d%s\n" "${m_off[$tz]}" "$EOL";
+			printf "  %d%s\t// %s\n" "${m_off[$tz]}" "$EOL" "${abbrs[$tz]}"
 		done
 		printf "\n"
 
@@ -71,7 +70,7 @@ for linenum in $(seq 1 $len); do
 		EOL=","
 		for tz in $(seq 0 $index); do
 			if [[ $tz -eq $index ]]; then EOL=" };"; fi
-			printf "  DS_NONE%s\t// %s\n" "$EOL" "${abbrs[$tz]}";
+			printf "  DS_NONE%s\t// %s\n" "$EOL" "${abbrs[$tz]}"
 		done
 		printf "\n"
 		printf "// the first entry in each DS_* table represent impossible values"
