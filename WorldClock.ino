@@ -341,23 +341,29 @@ bool isDst(int tznum) {
 
 // determine if it is currently the next day in specified timezone
 bool isNextDay(int tznum) {
+	// add 24 hours/60 minute offsets to work around some apparent unsigned/signed casting issue
+	int thatTzHour = LOAD(TZ_HOUR + tznum) + 24, thatTzMin = LOAD(TZ_MIN + tznum)+ 60;
+	int thisTzHour = LOAD(TZ_HOUR + tz[TZ_LOCAL]) + 24, thisTzMin = LOAD(TZ_MIN + tz[TZ_LOCAL]) + 60;
 	// only possible for timezones larger than local
-	if (LOAD(TZ_HOUR + tznum) > LOAD(TZ_HOUR + tz[TZ_LOCAL])) return false;
-	if (LOAD(TZ_MIN + tznum) > LOAD(TZ_MIN + tz[TZ_LOCAL])) return false;
+	if (thatTzHour > thisTzHour) return false;
+	if (thatTzMin > thisTzMin) return false;
 
 	utcToLocal(tznum);
-	int thatday = ltime[DAY];
+	int thatDay = ltime[DAY];
 	utcToLocal(tz[TZ_LOCAL]);
-	int thisday = ltime[DAY];
-	if (thisday != thatday) return true;
+	int thisDay = ltime[DAY];
+	if (thisDay != thatDay) return true;
 	return false;
 }
 
 // determine if it is currently the previous day in specified timezone
 bool isPrevDay(int tznum) {
+	// add 24 hours/60 minute offsets to work around some apparent unsigned/signed casting issue
+	int thatTzHour = LOAD(TZ_HOUR + tznum) + 24, thatTzMin = LOAD(TZ_MIN + tznum)+ 60;
+	int thisTzHour = LOAD(TZ_HOUR + tz[TZ_LOCAL]) + 24, thisTzMin = LOAD(TZ_MIN + tz[TZ_LOCAL]) + 60;
 	// only possible for timezones smaller than local
-	if (LOAD(TZ_HOUR + tznum) < LOAD(TZ_HOUR + tz[TZ_LOCAL])) return false;
-	if (LOAD(TZ_MIN + tznum) < LOAD(TZ_MIN + tz[TZ_LOCAL])) return false;
+	if (thatTzHour < thisTzHour) return false;
+	if (thatTzMin < thisTzMin) return false;
 
 	utcToLocal(tznum);
 	int thatday = ltime[DAY];

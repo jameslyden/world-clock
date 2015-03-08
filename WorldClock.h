@@ -28,8 +28,8 @@
 
 // special display characters
 #define SYM_DST		0xEB	// superscript X
-#define SYM_NEXTDAY	0xDF	// high dot
-#define SYM_PREVDAY	0xA1	// low dot
+#define SYM_NEXTDAY	0xA1	// high dot
+#define SYM_PREVDAY	0xDF	// low dot
 #define SYM_LARROW	0x7F	// left arrow
 #define SYM_RARROW	0x7E	// right arrow
 #define SYM_LINE		0xFF	// thick vertical line
