@@ -60,10 +60,10 @@ void setup() {
 	// FIXME-RTC: remove hardcoded values once RTC is online
 	time[YEAR] = 15;
 	time[MONTH] = 3;
-	time[DAY] = 6;
-	time[DOW] = 5;
-	time[HOUR] = 10;
-	time[MINUTE] = 12;
+	time[DAY] = 7;
+	time[DOW] = 6;
+	time[HOUR] = 0;
+	time[MINUTE] = 30;
 	time[SECOND] = 55;
 	for (short t = 0; t < SZ_TIME; t++) realtime[t] = time[t];
 
@@ -149,8 +149,8 @@ void localToUtc(short tznum) {
 		}
 		return;
 	}
-	short uhour = time[HOUR] - TZ_HOUR[tznum];
-	short umin = time[MINUTE] - TZ_MIN[tznum];
+	short uhour = time[HOUR] - LOAD(TZ_HOUR + tznum);
+	short umin = time[MINUTE] - LOAD(TZ_MIN + tznum);
 	short udow = time[DOW], uday = time[DAY], umonth = time[MONTH], uyear = time[YEAR];
 
 	normalizeDateTime(&umin, &uhour, &udow, &uday, &umonth, &uyear);
@@ -178,8 +178,8 @@ void utcToLocal(short tznum) {
 		return;
 	}
 
-	short lhour = time[HOUR] + TZ_HOUR[tznum];
-	short lmin = time[MINUTE] + TZ_MIN[tznum];
+	short lhour = time[HOUR] + LOAD(TZ_HOUR + tznum);
+	short lmin = time[MINUTE] + LOAD(TZ_MIN + tznum);
 	short ldow = time[DOW], lday = time[DAY], lmonth = time[MONTH], lyear = time[YEAR];
 
 	normalizeDateTime(&lmin, &lhour, &ldow, &lday, &lmonth, &lyear);
@@ -196,9 +196,6 @@ void utcToLocal(short tznum) {
 // fully normalize date/times where each value is no more than one "decade" off
 // (for instance, the myhours value must fall in the range -24 < *myhour < 47).
 void normalizeDateTime(short* mymin, short* myhour,  short* mydow,  short* myday,  short* mymonth,  short* myyear) {
-	short leapfactor = 0;
-	if ((*mymonth == 2) && (((*myyear % 4) == 0) && (*myyear % 100) != 0)) leapfactor = 1;
-
 	if (*mymin < 0) {
 		--*myhour;
 		*mymin += 60;
@@ -218,6 +215,14 @@ void normalizeDateTime(short* mymin, short* myhour,  short* mydow,  short* myday
 		++*mydow;
 		*myhour -= 24;
 	}
+
+	normalizeDate(mydow, myday, mymonth, myyear);
+}
+
+// like normalizeDateTime, but for date only
+void normalizeDate(short* mydow, short* myday, short* mymonth, short* myyear) {
+	short leapfactor = 0;
+	if ((*mymonth == 2) && (((*myyear % 4) == 0) && (*myyear % 100) != 0)) leapfactor = 1;
 
 	if (*mydow < 0) *mydow += 7;
 	if (*mydow > 6) *mydow -= 7;
@@ -247,26 +252,35 @@ void normalizeDateTime(short* mymin, short* myhour,  short* mydow,  short* myday
 
 // determine if it is currently daylight savings time by deduction
 bool isDst(short tznum) {
-	return true; // FIXME-DST: display test
-
-	short ds = TZ_DST[tznum];
+	short ds = LOAD(TZ_DST + tznum);
 	// return immediately if not a DST time zone
 	if (ds == DS_NONE) return false;
 
-	// normalize month values then compare
-	short m = time[MONTH], sm = DS_SMON[ds], fm = DS_FMON[ds];
+	short m = time[MONTH], sm = DS_SMON[ds], fm = DS_FMON[ds], sd, fd;
+
+	// if day of month provided, just use that...
+	if (DS_SDAY[ds]) sd = DS_SDAY[ds];
+	// otherwise, calculate start and end calendar days assuming we're in the right month
+	else {
+		short sdow = DS_SDOW[ds], syear = time[YEAR];
+		sd = ((time[DAY] - time[DOW] + sdow) % 7) + (7 * (DS_SWEEK[ds] - 1));
+		if (sd < 1) normalizeDate(&sdow, &sd, &sm, &syear);
+	}
+
+	// ditto for finish day
+	if (DS_FDAY[ds]) fd = DS_FDAY[ds];
+	else {
+		short fdow = DS_FDOW[fd], fyear = time[YEAR];
+		fd = ((time[DAY] - time[DOW] + DS_FDOW[ds]) % 7) + (7 * (DS_FWEEK[ds] - 1));
+		if (fd < 1) normalizeDate(&fdow, &fd, &fm, &fyear);
+	}
+
+	// re-order month values (if necessary) then compare
 	if (sm > fm) {
 		fm += 12;
 		m += 12;
 	}
 	if (m < sm || m > fm) return false;
-
-	// calculate start and end calendar days assuming we're in the right month
-	short sd = ((time[DAY] - time[DOW] + DS_SDOW[ds]) % 7) + (7 * (DS_SWEEK[ds] - 1));
-	short fd = ((time[DAY] - time[DOW] + DS_FDOW[ds]) % 7) + (7 * (DS_FWEEK[ds] - 1));
-	if (sd < 1) sd += 7;
-	if (fd < 1) fd += 7;
-
 	if (m == sm && time[DAY] < sd) return false; 
 	if (m == fm && time[DAY] > sd) return false; 
 
@@ -277,8 +291,8 @@ bool isDst(short tznum) {
 // determine if it is currently the next day in specified timezone
 bool isNextDay(short tznum) {
 	// only possible for timezones larger than local
-	if (TZ_HOUR[tznum] < TZ_HOUR[tz[TZ_LOCAL]]) return false;
-	if (TZ_MIN[tznum] < TZ_MIN[tz[TZ_LOCAL]]) return false;
+	if (LOAD(TZ_HOUR + tznum) > LOAD(TZ_HOUR + tz[TZ_LOCAL])) return false;
+	if (LOAD(TZ_MIN + tznum) > LOAD(TZ_MIN + tz[TZ_LOCAL])) return false;
 
 	utcToLocal(tznum);
 	short thatday = ltime[DAY];
@@ -291,8 +305,8 @@ bool isNextDay(short tznum) {
 // determine if it is currently the previous day in specified timezone
 bool isPrevDay(short tznum) {
 	// only possible for timezones smaller than local
-	if (TZ_HOUR[tznum] > TZ_HOUR[tz[TZ_LOCAL]]) return false;
-	if (TZ_MIN[tznum] > TZ_MIN[tz[TZ_LOCAL]]) return false;
+	if (LOAD(TZ_HOUR + tznum) < LOAD(TZ_HOUR + tz[TZ_LOCAL])) return false;
+	if (LOAD(TZ_MIN + tznum) < LOAD(TZ_MIN + tz[TZ_LOCAL])) return false;
 
 	utcToLocal(tznum);
 	short thatday = ltime[DAY];
@@ -390,8 +404,8 @@ void clearScreen(SoftwareSerial &disp) {
 
 // setSplash configures the splash screen
 void setSplash(SoftwareSerial &disp) {
-	disp.print("   WorldClock   ");
-	disp.print("  (four zones)  ");
+	disp.print(F("   WorldClock   "));
+	disp.print(F("  (multi-zone)  "));
 	disp.write(0x7C);
 	disp.write(0x0A);
 }

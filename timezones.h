@@ -15,7 +15,12 @@
  *   DS_SDOW	Numeric day of the week when DST starts
  *   DS_FMON	Numeric month when DST finishes
  *   DS_FDOW	Numeric day of the week when DST finishes
+ *   DS_SDAY	Numeric day of the month when DST starts
+ *   DS_FDAY	Numeric day of the month when DST finishes
  */
+
+// macro to simplify reading from PROGMEM arrays
+#define LOAD(x) pgm_read_word_near(x)
 
 // timezone name macros
 #define TZ_ZULU	0
@@ -168,7 +173,7 @@
 #define TZ_SST	146
 #define TZ_BIT	147
 
-/* full names take up far too much space
+/* full names take up far too much space -- maybe move to progmem later
 const char* TZ_NAME[] = {
 	"Coordinated Universal Time",
 	"Western European Time",
@@ -470,7 +475,7 @@ const char* TZ_LOC[] = {
 	"SST",
 	"BIT" };
 
-const short TZ_HOUR[] = {
+const short TZ_HOUR[] PROGMEM = {
 	0,	// UTC
 	0,	// WET
 	1,	// CET
@@ -620,7 +625,7 @@ const short TZ_HOUR[] = {
 	-11,	// SST
 	-12 };	// BIT
 
-const short TZ_MIN[] = {
+const short TZ_MIN[] PROGMEM = {
 	0,	// UTC
 	0,	// WET
 	0,	// CET
@@ -782,8 +787,7 @@ const short TZ_MIN[] = {
 #define DS_PARAGUAY	9	// 1st Sun of OCT, 4th Sun of MAR
 #define DS_URUGUAY	10	// 1st Sun of OCT, 2nd Sun of MAR
 
-// add additional DS_<name> entries here
-const byte TZ_DST[] = {
+const byte TZ_DST[] PROGMEM = {
 	DS_NONE,	// UTC
 	DS_EUROPE,	// WET
 	DS_EUROPE,	// CET

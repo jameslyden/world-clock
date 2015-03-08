@@ -85,6 +85,7 @@ void updateTime();
 void utcToLocal(short tznum);
 void localToUtc(short tznum);
 void normalizeDateTime(short* minute, short* hour, short* dow, short* day, short* month, short* year);
+void normalizeDate(short* dow, short* day, short* month, short* year);
 bool isDst(short tznum);
 bool isNextDay(short tznum);
 bool isPrevDay(short tznum);
