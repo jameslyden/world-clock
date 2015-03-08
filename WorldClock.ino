@@ -15,6 +15,7 @@
 #include <EEPROM.h>
 #include "timezones.h"
 #include "WorldClock.h"
+#include "IO.h"
 // FIXME-RTC: for RTC simulation only
 #include <TimerOne.h>
 
@@ -33,17 +34,25 @@ int ltime[SZ_TIME];						// synced to/from time[] when requested
 
 // display attributes
 bool heartbeat = false;
+bool primaryView = false;
 volatile bool fUpdateDisp = false;
 
 // display devices
-SoftwareSerial LCD0(2,7);	// avoid PWM/timer pins, connect LCD0 input to pin 7
-SoftwareSerial LCD1(4,8);	// connect LCD1 input to pin 8
+SoftwareSerial LCD0(LCD0_IN ,LCD0_OUT);
+SoftwareSerial LCD1(LCD1_IN, LCD1_OUT);
 
 // MANDATORY FUNCTIONS
 
 void setup() {
+	// configure hardware first
+	pinMode(BUTTON[UP], INPUT);
+	pinMode(BUTTON[DN], INPUT);
+	pinMode(BUTTON[LT], INPUT);
+	pinMode(BUTTON[RT], INPUT);
+	pinMode(BUTTON[OK], INPUT);
 	LCD0.begin(9600);
 	LCD1.begin(9600);
+
 	// backlight to max
 	setBacklight(LCD0, ON);
 	setBacklight(LCD1, ON);
@@ -93,9 +102,14 @@ void setup() {
 */
 }
 
-
 void loop() {
 	// handle inputs
+	if (digitalRead(2)) {
+		if (primaryView) primaryView = false;
+		else primaryView = true;
+		delay(100);
+		fUpdateDisp = true;
+	}
 
 	// update non-volatile time
 	if (fUpdateTime) {
@@ -350,30 +364,48 @@ void updateDisp() {
 	clearScreen(LCD0);
 	clearScreen(LCD1);
 	
-	// draw heartbeat
-	if (time[SECOND] % 2) {
-		moveCursor(LCD0, 1, 0);
-		LCD0.print('.');
-	}
-
 	// print date, time, and UTC
-	moveCursor(LCD0, 0, 0);
-	LCD0.print(date);
-	moveCursor(LCD0, 1, 2);
-	LCD0.print(DOW_NAME[time[DOW]]);
-	moveCursor(LCD0, 0, 9);
-	LCD0.print(dispTime[0]);
-	moveCursor(LCD0, 1, 9);
-	LCD0.print(utcTime);
-	// print additional time zones
-	moveCursor(LCD1, 0, 0);
-	LCD1.print(dispTime[1]);
-	moveCursor(LCD1, 1, 1);
-	LCD1.print(tzLabel[1]);
-	moveCursor(LCD1, 0, 8);
-	LCD1.print(dispTime[2]);
-	moveCursor(LCD1, 1, 9);
-	LCD1.print(tzLabel[2]);
+	if (primaryView) {
+		moveCursor(LCD0, 0, 0);
+		LCD0.print(date);
+		moveCursor(LCD0, 1, 2);
+		LCD0.print(DOW_NAME[time[DOW]]);
+		moveCursor(LCD0, 0, 9);
+		LCD0.print(dispTime[0]);
+		moveCursor(LCD0, 1, 9);
+		LCD0.print(utcTime);
+		// draw heartbeat
+		if (time[SECOND] % 2) {
+			moveCursor(LCD0, 0, 12);
+			LCD0.print(' ');
+		}
+		// print additional time zones
+		moveCursor(LCD1, 0, 0);
+		LCD1.print(dispTime[1]);
+		moveCursor(LCD1, 1, 1);
+		LCD1.print(tzLabel[1]);
+		moveCursor(LCD1, 0, 8);
+		LCD1.print(dispTime[2]);
+		moveCursor(LCD1, 1, 9);
+		LCD1.print(tzLabel[2]);
+	} else {
+		moveCursor(LCD0, 0, 0);
+		LCD0.print(dispTime[3]);
+		moveCursor(LCD0, 1, 1);
+		LCD0.print(tzLabel[3]);
+		moveCursor(LCD0, 0, 8);
+		LCD0.print(dispTime[4]);
+		moveCursor(LCD0, 1, 9);
+		LCD0.print(tzLabel[4]);
+		moveCursor(LCD1, 0, 0);
+		LCD1.print(dispTime[5]);
+		moveCursor(LCD1, 1, 1);
+		LCD1.print(tzLabel[5]);
+		moveCursor(LCD1, 0, 8);
+		LCD1.print(dispTime[6]);
+		moveCursor(LCD1, 1, 9);
+		LCD1.print(tzLabel[6]);
+	}
 
 	// let I/O settle
 	delay(10);
