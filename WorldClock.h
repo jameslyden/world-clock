@@ -80,7 +80,7 @@ const int SZ_MONTH[] = {
 	31 };
 
 // function prototypes
-void updateDisp();
+void updateDisp(bool refresh = false);
 void updateTime();
 void utcToLocal(int tznum);
 void localToUtc(int tznum);
@@ -89,6 +89,7 @@ void normalizeDate(int* dow, int* day, int* month, int* year);
 bool isDst(int tznum);
 bool isNextDay(int tznum);
 bool isPrevDay(int tznum);
+void printAt(SoftwareSerial &disp, int row, int col, const char *str);
 void moveCursor(SoftwareSerial &disp, int row, int col);
 void clearScreen(SoftwareSerial &disp);
 void setSplash(SoftwareSerial &disp);

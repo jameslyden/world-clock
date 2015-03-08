@@ -34,8 +34,9 @@ int ltime[SZ_TIME];						// synced to/from time[] when requested
 
 // display attributes
 bool heartbeat = false;
-bool primaryView = false;
+bool primaryView = true;
 volatile bool fUpdateDisp = false;
+volatile bool fRedrawDisp = false;
 
 // display devices
 SoftwareSerial LCD0(LCD0_IN ,LCD0_OUT);
@@ -100,15 +101,17 @@ void setup() {
 		EEPROM.write(MEM_TZ + t, tzload[t]);
 			EEPROM.write(MEM_LABEL + (t * SZ_LABEL) + c, tznames[t][c]);
 */
+	clearScreen(LCD0);
+	clearScreen(LCD1);
 }
 
 void loop() {
 	// handle inputs
-	if (digitalRead(2)) {
+	if (digitalRead(BUTTON[OK])) {
 		if (primaryView) primaryView = false;
 		else primaryView = true;
 		delay(100);
-		fUpdateDisp = true;
+		fRedrawDisp = true;
 	}
 
 	// update non-volatile time
@@ -120,6 +123,11 @@ void loop() {
 	}
 
 	// redraw display
+	if (fRedrawDisp) {
+		updateDisp(true);
+		fRedrawDisp = false;
+		fUpdateDisp = false;
+	}
 	if (fUpdateDisp) {
 		updateDisp();
 		fUpdateDisp = false;
@@ -333,7 +341,7 @@ bool isPrevDay(int tznum) {
 // DISPLAY FUNCTIONS
 
 // render the date and clocks (local, zulu, tz1-tz3) to the displays
-void updateDisp() {
+void updateDisp(bool refresh) {
 	// build formatted times
 	char date[8], utcTime[8], dispTime[SZ_TZ][7];
    char day[SZ_TZ], dayUtc;  // symbols for previous/next day
@@ -360,51 +368,35 @@ void updateDisp() {
 		sprintf(dispTime[t], "%c%02d:%02d", day[t], ltime[HOUR], ltime[MINUTE]);
 	}
 
-	// clear displays 
-	clearScreen(LCD0);
-	clearScreen(LCD1);
+	if (refresh) {
+		clearScreen(LCD0);
+		clearScreen(LCD1);
+	}
 	
 	// print date, time, and UTC
 	if (primaryView) {
-		moveCursor(LCD0, 0, 0);
-		LCD0.print(date);
-		moveCursor(LCD0, 1, 2);
-		LCD0.print(DOW_NAME[time[DOW]]);
-		moveCursor(LCD0, 0, 9);
-		LCD0.print(dispTime[0]);
-		moveCursor(LCD0, 1, 9);
-		LCD0.print(utcTime);
+		printAt(LCD0, 0, 0, date);
+		printAt(LCD0, 1, 2, DOW_NAME[time[DOW]]);
+		printAt(LCD0, 0, 9, dispTime[0]);
+		printAt(LCD0, 1, 9, utcTime);
 		// draw heartbeat
 		if (time[SECOND] % 2) {
-			moveCursor(LCD0, 0, 12);
-			LCD0.print(' ');
+			printAt(LCD0, 0, 12, " ");
 		}
 		// print additional time zones
-		moveCursor(LCD1, 0, 0);
-		LCD1.print(dispTime[1]);
-		moveCursor(LCD1, 1, 1);
-		LCD1.print(tzLabel[1]);
-		moveCursor(LCD1, 0, 8);
-		LCD1.print(dispTime[2]);
-		moveCursor(LCD1, 1, 9);
-		LCD1.print(tzLabel[2]);
+		printAt(LCD1, 0, 0, dispTime[1]);
+		printAt(LCD1, 1, 1, tzLabel[1]);
+		printAt(LCD1, 0, 8, dispTime[2]);
+		printAt(LCD1, 1, 9, tzLabel[2]);
 	} else {
-		moveCursor(LCD0, 0, 0);
-		LCD0.print(dispTime[3]);
-		moveCursor(LCD0, 1, 1);
-		LCD0.print(tzLabel[3]);
-		moveCursor(LCD0, 0, 8);
-		LCD0.print(dispTime[4]);
-		moveCursor(LCD0, 1, 9);
-		LCD0.print(tzLabel[4]);
-		moveCursor(LCD1, 0, 0);
-		LCD1.print(dispTime[5]);
-		moveCursor(LCD1, 1, 1);
-		LCD1.print(tzLabel[5]);
-		moveCursor(LCD1, 0, 8);
-		LCD1.print(dispTime[6]);
-		moveCursor(LCD1, 1, 9);
-		LCD1.print(tzLabel[6]);
+		printAt(LCD0, 0, 0, dispTime[3]);
+		printAt(LCD0, 1, 1, tzLabel[3]);
+		printAt(LCD0, 0, 8, dispTime[4]);
+		printAt(LCD0, 1, 9, tzLabel[4]);
+		printAt(LCD1, 0, 0, dispTime[5]);
+		printAt(LCD1, 1, 1, tzLabel[5]);
+		printAt(LCD1, 0, 8, dispTime[6]);
+		printAt(LCD1, 1, 9, tzLabel[6]);
 	}
 
 	// let I/O settle
@@ -413,13 +405,17 @@ void updateDisp() {
 
 // LCD HELPERS
 
+// printAt prints the provided string onto the provided display at the specified
+// row and column (zero-indexed)
+void printAt(SoftwareSerial &disp, int row, int column, const char* str) {
+	moveCursor(disp, row, column);
+	disp.print(str);
+}
+
 // moveCursor moves to the specified row and column (zero-indexed)
 void moveCursor(SoftwareSerial &disp, int row, int col) {
 	// error checking
-	if (row < 0 || row > 1 || col < 0 || col > 15) {
-		row = 0;
-		col = 0;
-	}
+	if (row < 0 || row > 1 || col < 0 || col > 15) return;
 
 	// set cursor
 	disp.write(0xFE);
