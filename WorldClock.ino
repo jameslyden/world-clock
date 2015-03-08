@@ -21,15 +21,15 @@
 // GLOBAL VARIABLES
 
 // persistent tracking of selected timezone data
-short tz[SZ_TZ];
+int tz[SZ_TZ];
 bool tzDst[SZ_TZ], tzNext[SZ_TZ], tzPrev[SZ_TZ];
 char tzLabel[SZ_TZ][SZ_LABEL];
 
 // current date/time in UTC
-volatile short realtime[SZ_TIME];		// updated by interrupt
-short time[SZ_TIME];						// copied from realtime[] outside of interrupt
+volatile int realtime[SZ_TIME];		// updated by interrupt
+int time[SZ_TIME];						// copied from realtime[] outside of interrupt
 volatile bool fUpdateTime = false;	// trigger copy in main loop
-short ltime[SZ_TIME];						// synced to/from time[] when requested
+int ltime[SZ_TIME];						// synced to/from time[] when requested
 
 // display attributes
 bool heartbeat = false;
@@ -65,7 +65,7 @@ void setup() {
 	time[HOUR] = 0;
 	time[MINUTE] = 30;
 	time[SECOND] = 55;
-	for (short t = 0; t < SZ_TIME; t++) realtime[t] = time[t];
+	for (int t = 0; t < SZ_TIME; t++) realtime[t] = time[t];
 
 	// FIXME-RTC: setup one second timer
 	Timer1.initialize(1000000);
@@ -73,12 +73,12 @@ void setup() {
 	Timer1.start();
 
 	// initialize timezone values
-	for (short t = 0; t < SZ_TZ; t++) {
+	for (int t = 0; t < SZ_TZ; t++) {
 		tz[t] = EEPROM.read(MEM_TZ + t);
 		tzDst[t] = isDst(tz[t]);
 		tzNext[t] = isNextDay(tz[t]);
 		tzPrev[t] = isPrevDay(tz[t]);
-		for (short c = 0; c < SZ_LABEL; c++) {
+		for (int c = 0; c < SZ_LABEL; c++) {
 			tzLabel[t][c] = (char)EEPROM.read(MEM_LABEL + (t * SZ_LABEL) + c);
 		}
 	}
@@ -86,8 +86,8 @@ void setup() {
 /* FIXME-CONFIG: sample values to load into EEPROM until runtime config is coded
  * Insert EEPROM.write() calls into last portion of setup() immediately prior to
  * the equivalent EEPROM.read() calls.
-	short tzload[SZ_TZ] = { 137, 69, 143, 130, 2, 2, 10};
-	short tznames[SZ_TZ][SZ_LABEL] = { "Calif", "Japan", "Hawaii", "Wash DC", "Spain", "Italy", "Bahrain"};
+	int tzload[SZ_TZ] = { 137, 69, 143, 130, 2, 2, 10};
+	int tznames[SZ_TZ][SZ_LABEL] = { "Calif", "Japan", "Hawaii", "Wash DC", "Spain", "Italy", "Bahrain"};
 		EEPROM.write(MEM_TZ + t, tzload[t]);
 			EEPROM.write(MEM_LABEL + (t * SZ_LABEL) + c, tznames[t][c]);
 */
@@ -100,7 +100,7 @@ void loop() {
 	// update non-volatile time
 	if (fUpdateTime) {
 		noInterrupts();
-		for (short t = 0; t < SZ_TIME; t++) time[t] = realtime[t];
+		for (int t = 0; t < SZ_TIME; t++) time[t] = realtime[t];
 		interrupts();
 		fUpdateTime = false;
 	}
@@ -130,8 +130,8 @@ void updateTime() {
 		realtime[MINUTE]++;
 	}
 	// once seconds-to-minutes is taken care of, use normalizeDateTime to fix the rest
-	short nminute = realtime[MINUTE], nhour = realtime[HOUR], ndow = realtime[DOW];
-	short nday = realtime[DAY], nmonth = realtime[MONTH], nyear = realtime[YEAR];
+	int nminute = realtime[MINUTE], nhour = realtime[HOUR], ndow = realtime[DOW];
+	int nday = realtime[DAY], nmonth = realtime[MONTH], nyear = realtime[YEAR];
 	normalizeDateTime(&nminute, &nhour, &ndow, &nday, &nmonth, &nyear);
 	realtime[MINUTE] = nminute;
 	realtime[HOUR] = nhour;
@@ -142,16 +142,16 @@ void updateTime() {
 }
 
 // populate time[] by adjusting ltime[] into UTC
-void localToUtc(short tznum) {
+void localToUtc(int tznum) {
 	if (tznum == TZ_UTC) {
-		for (short t = 0; t < SZ_TIME; t++) {
+		for (int t = 0; t < SZ_TIME; t++) {
 			time[t] = ltime[t];
 		}
 		return;
 	}
-	short uhour = time[HOUR] - LOAD(TZ_HOUR + tznum);
-	short umin = time[MINUTE] - LOAD(TZ_MIN + tznum);
-	short udow = time[DOW], uday = time[DAY], umonth = time[MONTH], uyear = time[YEAR];
+	int uhour = time[HOUR] - LOAD(TZ_HOUR + tznum);
+	int umin = time[MINUTE] - LOAD(TZ_MIN + tznum);
+	int udow = time[DOW], uday = time[DAY], umonth = time[MONTH], uyear = time[YEAR];
 
 	normalizeDateTime(&umin, &uhour, &udow, &uday, &umonth, &uyear);
 
@@ -164,23 +164,23 @@ void localToUtc(short tznum) {
 
 	// last steps need to be copying time[] to realtime[], then setting RTC to realtime[]
 	noInterrupts();
-	for (short t = 0; t < SZ_TIME; t++) realtime[t] = time[t];
+	for (int t = 0; t < SZ_TIME; t++) realtime[t] = time[t];
 	interrupts();
 	return;
 }
 
 // populate ltime[] by adjusting time[] into the provided timezone
-void utcToLocal(short tznum) {
+void utcToLocal(int tznum) {
 	if (tznum == TZ_UTC) {
-		for (short t = 0; t < SZ_TIME; t++) {
+		for (int t = 0; t < SZ_TIME; t++) {
 			ltime[t] = time[t];
 		}
 		return;
 	}
 
-	short lhour = time[HOUR] + LOAD(TZ_HOUR + tznum);
-	short lmin = time[MINUTE] + LOAD(TZ_MIN + tznum);
-	short ldow = time[DOW], lday = time[DAY], lmonth = time[MONTH], lyear = time[YEAR];
+	int lhour = time[HOUR] + LOAD(TZ_HOUR + tznum);
+	int lmin = time[MINUTE] + LOAD(TZ_MIN + tznum);
+	int ldow = time[DOW], lday = time[DAY], lmonth = time[MONTH], lyear = time[YEAR];
 
 	normalizeDateTime(&lmin, &lhour, &ldow, &lday, &lmonth, &lyear);
 
@@ -195,7 +195,7 @@ void utcToLocal(short tznum) {
 // Normalize date/time based on standard ruleset. This function is only able to
 // fully normalize date/times where each value is no more than one "decade" off
 // (for instance, the myhours value must fall in the range -24 < *myhour < 47).
-void normalizeDateTime(short* mymin, short* myhour,  short* mydow,  short* myday,  short* mymonth,  short* myyear) {
+void normalizeDateTime(int* mymin, int* myhour,  int* mydow,  int* myday,  int* mymonth,  int* myyear) {
 	if (*mymin < 0) {
 		--*myhour;
 		*mymin += 60;
@@ -220,8 +220,8 @@ void normalizeDateTime(short* mymin, short* myhour,  short* mydow,  short* myday
 }
 
 // like normalizeDateTime, but for date only
-void normalizeDate(short* mydow, short* myday, short* mymonth, short* myyear) {
-	short leapfactor = 0;
+void normalizeDate(int* mydow, int* myday, int* mymonth, int* myyear) {
+	int leapfactor = 0;
 	if ((*mymonth == 2) && (((*myyear % 4) == 0) && (*myyear % 100) != 0)) leapfactor = 1;
 
 	if (*mydow < 0) *mydow += 7;
@@ -251,18 +251,18 @@ void normalizeDate(short* mydow, short* myday, short* mymonth, short* myyear) {
 }
 
 // determine if it is currently daylight savings time by deduction
-bool isDst(short tznum) {
-	short ds = LOAD(TZ_DST + tznum);
+bool isDst(int tznum) {
+	int ds = LOAD(TZ_DST + tznum);
 	// return immediately if not a DST time zone
 	if (ds == DS_NONE) return false;
 
-	short m = time[MONTH], sm = DS_SMON[ds], fm = DS_FMON[ds], sd, fd;
+	int m = time[MONTH], sm = DS_SMON[ds], fm = DS_FMON[ds], sd, fd;
 
 	// if day of month provided, just use that...
 	if (DS_SDAY[ds]) sd = DS_SDAY[ds];
 	// otherwise, calculate start and end calendar days assuming we're in the right month
 	else {
-		short sdow = DS_SDOW[ds], syear = time[YEAR];
+		int sdow = DS_SDOW[ds], syear = time[YEAR];
 		sd = ((time[DAY] - time[DOW] + sdow) % 7) + (7 * (DS_SWEEK[ds] - 1));
 		if (sd < 1) normalizeDate(&sdow, &sd, &sm, &syear);
 	}
@@ -270,7 +270,7 @@ bool isDst(short tznum) {
 	// ditto for finish day
 	if (DS_FDAY[ds]) fd = DS_FDAY[ds];
 	else {
-		short fdow = DS_FDOW[fd], fyear = time[YEAR];
+		int fdow = DS_FDOW[fd], fyear = time[YEAR];
 		fd = ((time[DAY] - time[DOW] + DS_FDOW[ds]) % 7) + (7 * (DS_FWEEK[ds] - 1));
 		if (fd < 1) normalizeDate(&fdow, &fd, &fm, &fyear);
 	}
@@ -289,29 +289,29 @@ bool isDst(short tznum) {
 }
 
 // determine if it is currently the next day in specified timezone
-bool isNextDay(short tznum) {
+bool isNextDay(int tznum) {
 	// only possible for timezones larger than local
 	if (LOAD(TZ_HOUR + tznum) > LOAD(TZ_HOUR + tz[TZ_LOCAL])) return false;
 	if (LOAD(TZ_MIN + tznum) > LOAD(TZ_MIN + tz[TZ_LOCAL])) return false;
 
 	utcToLocal(tznum);
-	short thatday = ltime[DAY];
+	int thatday = ltime[DAY];
 	utcToLocal(tz[TZ_LOCAL]);
-	short thisday = ltime[DAY];
+	int thisday = ltime[DAY];
 	if (thisday != thatday) return true;
 	return false;
 }
 
 // determine if it is currently the previous day in specified timezone
-bool isPrevDay(short tznum) {
+bool isPrevDay(int tznum) {
 	// only possible for timezones smaller than local
 	if (LOAD(TZ_HOUR + tznum) < LOAD(TZ_HOUR + tz[TZ_LOCAL])) return false;
 	if (LOAD(TZ_MIN + tznum) < LOAD(TZ_MIN + tz[TZ_LOCAL])) return false;
 
 	utcToLocal(tznum);
-	short thatday = ltime[DAY];
+	int thatday = ltime[DAY];
 	utcToLocal(tz[TZ_LOCAL]);
-	short thisday = ltime[DAY];
+	int thisday = ltime[DAY];
 	if (thisday != thatday) return true;
 	return false;
 }
@@ -325,7 +325,7 @@ void updateDisp() {
    char day[SZ_TZ], dayUtc;  // symbols for previous/next day
 
 	// set indicator characters first
-	for (short t = 0; t < SZ_TZ; t++) {
+	for (int t = 0; t < SZ_TZ; t++) {
 		// day: next, prev, or blank
 		if (isNextDay(tz[t])) day[t] = SYM_NEXTDAY;
 		else if (isPrevDay(tz[t])) day[t] = SYM_PREVDAY;
@@ -341,7 +341,7 @@ void updateDisp() {
 	utcToLocal(tz[TZ_LOCAL]);
 	sprintf(date, "%02d%s%02d", ltime[DAY], MON_NAME[ltime[MONTH]], ltime[YEAR]);
 	// populate time strings for every time zone other than UTC
-	for (short t = 0; t < SZ_TZ; t++) {
+	for (int t = 0; t < SZ_TZ; t++) {
 		utcToLocal(tz[t]);
 		sprintf(dispTime[t], "%c%02d:%02d", day[t], ltime[HOUR], ltime[MINUTE]);
 	}
@@ -382,7 +382,7 @@ void updateDisp() {
 // LCD HELPERS
 
 // moveCursor moves to the specified row and column (zero-indexed)
-void moveCursor(SoftwareSerial &disp, short row, short col) {
+void moveCursor(SoftwareSerial &disp, int row, int col) {
 	// error checking
 	if (row < 0 || row > 1 || col < 0 || col > 15) {
 		row = 0;
@@ -412,7 +412,7 @@ void setSplash(SoftwareSerial &disp) {
 
 // setBacklight turns on or off the backlight
 void setBacklight(SoftwareSerial &disp, bool state) {
-	short blPower = 0x80;
+	int blPower = 0x80;
 
 	if (state) blPower = 0x9D;
 

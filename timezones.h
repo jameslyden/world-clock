@@ -475,7 +475,7 @@ const char* TZ_LOC[] = {
 	"SST",
 	"BIT" };
 
-const short TZ_HOUR[] PROGMEM = {
+const int TZ_HOUR[] PROGMEM = {
 	0,	// UTC
 	0,	// WET
 	1,	// CET
@@ -625,7 +625,7 @@ const short TZ_HOUR[] PROGMEM = {
 	-11,	// SST
 	-12 };	// BIT
 
-const short TZ_MIN[] PROGMEM = {
+const int TZ_MIN[] PROGMEM = {
 	0,	// UTC
 	0,	// WET
 	0,	// CET
@@ -938,7 +938,7 @@ const byte TZ_DST[] PROGMEM = {
 	DS_NONE };	// BIT
 
 // the first entry in each DS_* table represent impossible values to ensure DS_NONE has no effect.
-const short DS_SMON[] = {
+const int DS_SMON[] = {
 	99,	// NONE
 	9,		// AFRICA
 	10,	// AUSTRALIA
@@ -951,7 +951,7 @@ const short DS_SMON[] = {
 	10,	// PARAGUAY
 	10	};	// URUGUAY
 
-const short DS_SWEEK[] = {
+const int DS_SWEEK[] = {
 	99,	// NONE
 	1,		// AFRICA
 	1,		// AUSTRALIA
@@ -964,7 +964,7 @@ const short DS_SWEEK[] = {
 	1,		// PARAGUAY
 	1	};	// URUGUAY
 
-const short DS_SDOW[] = {
+const int DS_SDOW[] = {
 	99,	// NONE
 	0,		// AFRICA
 	0,		// AUSTRALIA
@@ -977,7 +977,7 @@ const short DS_SDOW[] = {
 	0,		// PARAGUAY
 	0	};	// URUGUAY
 
-const short DS_FMON[] = {
+const int DS_FMON[] = {
 	99,	// NONE
 	4,		// AFRICA
 	4,		// AUSTRALIA
@@ -990,7 +990,7 @@ const short DS_FMON[] = {
 	3,		// PARAGUAY
 	3,	};	// URUGUAY
 
-const short DS_FWEEK[] = {
+const int DS_FWEEK[] = {
 	99,	// NONE
 	1,		// AFRICA
 	1,		// AUSTRALIA
@@ -1003,7 +1003,7 @@ const short DS_FWEEK[] = {
 	4,		// PARAGUAY
 	2,	};	// URUGUAY
 
-const short DS_FDOW[] = {
+const int DS_FDOW[] = {
 	99,	// NONE
 	0,		// AFRICA
 	0,		// AUSTRALIA
@@ -1017,7 +1017,7 @@ const short DS_FDOW[] = {
 	0,	};	// URUGUAY
 
 // if day != 0, override week/day-of-week calculation
-const short DS_SDAY[] = {
+const int DS_SDAY[] = {
 	0,		// NONE
 	0,		// AFRICA
 	0,		// AUSTRALIA
@@ -1030,7 +1030,7 @@ const short DS_SDAY[] = {
 	0,		// PARAGUAY
 	0	};	// URUGUAY
 
-const short DS_FDAY[] = {
+const int DS_FDAY[] = {
 	0,		// NONE
 	0,		// AFRICA
 	0,		// AUSTRALIA

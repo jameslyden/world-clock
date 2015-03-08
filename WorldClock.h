@@ -64,7 +64,7 @@ const char* MON_NAME[] = {
 	"NOV",
 	"DEC" };
 
-const short SZ_MONTH[] = {
+const int SZ_MONTH[] = {
 	31, // december, rolled over
 	31,
 	28,
@@ -82,14 +82,14 @@ const short SZ_MONTH[] = {
 // function prototypes
 void updateDisp();
 void updateTime();
-void utcToLocal(short tznum);
-void localToUtc(short tznum);
-void normalizeDateTime(short* minute, short* hour, short* dow, short* day, short* month, short* year);
-void normalizeDate(short* dow, short* day, short* month, short* year);
-bool isDst(short tznum);
-bool isNextDay(short tznum);
-bool isPrevDay(short tznum);
-void moveCursor(SoftwareSerial &disp, short row, short col);
+void utcToLocal(int tznum);
+void localToUtc(int tznum);
+void normalizeDateTime(int* minute, int* hour, int* dow, int* day, int* month, int* year);
+void normalizeDate(int* dow, int* day, int* month, int* year);
+bool isDst(int tznum);
+bool isNextDay(int tznum);
+bool isPrevDay(int tznum);
+void moveCursor(SoftwareSerial &disp, int row, int col);
 void clearScreen(SoftwareSerial &disp);
 void setSplash(SoftwareSerial &disp);
 void setBacklight(SoftwareSerial &disp, bool state);
