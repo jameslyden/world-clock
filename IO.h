@@ -6,6 +6,9 @@
  * This file contains the mapping of logical I/O channels to physical pin numbers.
  */
 
+// hold time in ms after each user interaction
+#define IODELAY	100
+
 // LCD outputs (and inputs, which must be mapped to unused pins)
 #define LCD0_OUT	7
 #define LCD1_OUT	8

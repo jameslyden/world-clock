@@ -110,8 +110,37 @@ void loop() {
 	if (PRESSED(OK)) {
 		if (primaryView) primaryView = false;
 		else primaryView = true;
-		delay(100);
 		fRedrawDisp = true;
+		delay(IODELAY);
+	}
+	if (PRESSED(RIGHT)) {
+		noInterrupts();
+		realtime[HOUR]++;
+		interrupts();
+		fUpdateDisp = true;
+		delay(IODELAY);
+	}
+	if (PRESSED(LEFT)) {
+		noInterrupts();
+		realtime[HOUR]--;
+		interrupts();
+		fUpdateDisp = true;
+		delay(IODELAY);
+	}
+
+	if (PRESSED(DOWN)) {
+		noInterrupts();
+		realtime[MINUTE]++;
+		interrupts();
+		fUpdateDisp = true;
+		delay(IODELAY);
+	}
+	if (PRESSED(UP)) {
+		noInterrupts();
+		realtime[MINUTE]--;
+		interrupts();
+		fUpdateDisp = true;
+		delay(IODELAY);
 	}
 
 	// update non-volatile time
@@ -134,7 +163,7 @@ void loop() {
 	}
 
 	// for stability
-	delay(10);
+	delay(1);
 }
 
 // DATE/TIME FUNCTIONS
@@ -398,9 +427,6 @@ void updateDisp(bool refresh) {
 		printAt(LCD1, 0, 8, dispTime[6]);
 		printAt(LCD1, 1, 9, tzLabel[6]);
 	}
-
-	// let I/O settle
-	delay(10);
 }
 
 // LCD HELPERS
@@ -420,14 +446,14 @@ void moveCursor(SoftwareSerial &disp, int row, int col) {
 	// set cursor
 	disp.write(0xFE);
 	disp.write((row * 0x40) + col + 0x80);
-	delay(5);
+	delay(1);
 }
 
 // clearScreen erases all characters from the display
 void clearScreen(SoftwareSerial &disp) {
 	disp.write(0xFE);
 	disp.write(0x01);
-	delay(5);
+	delay(1);
 }
 
 // setSplash configures the splash screen
