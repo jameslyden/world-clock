@@ -372,7 +372,7 @@ bool isPrevDay(int tznum) {
 // render the date and clocks (local, zulu, tz1-tz3) to the displays
 void updateDisp(bool refresh) {
 	// build formatted times
-	char date[8], utcTime[8], dispTime[SZ_TZ][7];
+	char date[8], dow[8], utcTime[8], dispTime[SZ_TZ][7];
    char day[SZ_TZ], dayUtc;  // symbols for previous/next day
 
 	// set indicator characters first
@@ -391,6 +391,7 @@ void updateDisp(bool refresh) {
 	// make adjustments for localized times
 	utcToLocal(tz[TZ_LOCAL]);
 	sprintf(date, "%02d%s%02d", ltime[DAY], MON_NAME[ltime[MONTH]], ltime[YEAR]);
+	sprintf(dow, "  %s  ", DOW_NAME[ltime[DOW]]);
 	// populate time strings for every time zone other than UTC
 	for (int t = 0; t < SZ_TZ; t++) {
 		utcToLocal(tz[t]);
@@ -405,7 +406,7 @@ void updateDisp(bool refresh) {
 	// print date, time, and UTC
 	if (primaryView) {
 		printAt(LCD0, 0, 0, date);
-		printAt(LCD0, 1, 2, DOW_NAME[time[DOW]]);
+		printAt(LCD0, 1, 0, dow);
 		printAt(LCD0, 0, 9, dispTime[0]);
 		printAt(LCD0, 1, 9, utcTime);
 		// draw heartbeat
