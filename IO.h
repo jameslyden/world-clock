@@ -38,3 +38,5 @@ const int PRESS[] = {
 	0b01000,		// right
 	0b10000};	// ok
 
+// macros for easier-to-read input polling
+#define PRESSED(x)	digitalRead(BUTTON[x])

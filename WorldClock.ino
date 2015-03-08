@@ -107,7 +107,7 @@ void setup() {
 
 void loop() {
 	// handle inputs
-	if (digitalRead(BUTTON[OK])) {
+	if (PRESSED(OK)) {
 		if (primaryView) primaryView = false;
 		else primaryView = true;
 		delay(100);
