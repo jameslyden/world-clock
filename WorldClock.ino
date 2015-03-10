@@ -200,9 +200,10 @@ void localToUtc(int tznum) {
 		}
 		return;
 	}
-	int uhour = time[HOUR] - LOAD(TZ_HOUR + tznum);
-	int umin = time[MINUTE] - LOAD(TZ_MIN + tznum);
 	int udow = time[DOW], uday = time[DAY], umonth = time[MONTH], uyear = time[YEAR];
+	int umin = time[MINUTE] - LOAD(TZ_MIN + tznum);
+	int uhour = time[HOUR] - LOAD(TZ_HOUR + tznum);
+	if (isDst(tznum)) uhour--;
 
 	normalizeDateTime(&umin, &uhour, &udow, &uday, &umonth, &uyear);
 
@@ -229,9 +230,11 @@ void utcToLocal(int tznum) {
 		return;
 	}
 
-	int lhour = time[HOUR] + LOAD(TZ_HOUR + tznum);
-	int lmin = time[MINUTE] + LOAD(TZ_MIN + tznum);
 	int ldow = time[DOW], lday = time[DAY], lmonth = time[MONTH], lyear = time[YEAR];
+	int lmin = time[MINUTE] + LOAD(TZ_MIN + tznum);
+	int lhour = time[HOUR] + LOAD(TZ_HOUR + tznum);
+	if (isDst(tznum)) lhour++;
+
 
 	normalizeDateTime(&lmin, &lhour, &ldow, &lday, &lmonth, &lyear);
 
