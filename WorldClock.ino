@@ -306,7 +306,7 @@ void normalizeDate(int* mydow, int* myday, int* mymonth, int* myyear) {
 
 // determine if it is currently daylight savings time by deduction
 bool isDst(int tznum) {
-	int ds = LOAD(TZ_DST + tznum);
+	int ds = (byte)LOAD(TZ_DST + tznum);
 	// return immediately if not a DST time zone
 	if (ds == DS_NONE) return false;
 
@@ -381,8 +381,8 @@ bool isPrevDay(int tznum) {
 // render the date and clocks (local, zulu, tz1-tz3) to the displays
 void updateDisp(bool refresh) {
 	// build formatted times
-	char date[8], dow[8], utcTime[8], dispTime[SZ_TZ][7];
-   char day[SZ_TZ], dayUtc;  // symbols for previous/next day
+	char date[8], dow[8], utcTime[8], dispTime[SZ_TZ][8];
+   char dst [SZ_TZ], day[SZ_TZ], dayUtc;  // symbols for DST, previous/next day
 
 	// set indicator characters first
 	for (int t = 0; t < SZ_TZ; t++) {
@@ -390,6 +390,12 @@ void updateDisp(bool refresh) {
 		if (isNextDay(tz[t])) day[t] = SYM_NEXTDAY;
 		else if (isPrevDay(tz[t])) day[t] = SYM_PREVDAY;
 		else day[t] = ' ';
+		#ifdef SHOWDST
+		if(isDst(tz[t])) dst[t] = SYM_DST;
+		else dst[t] = ' ';
+		#else
+		dst[t] = ' ';
+		#endif
 	}
 	if (isNextDay(TZ_UTC)) dayUtc = SYM_NEXTDAY;
 	else if (isPrevDay(TZ_UTC)) dayUtc = SYM_PREVDAY;
@@ -404,7 +410,7 @@ void updateDisp(bool refresh) {
 	// populate time strings for every time zone other than UTC
 	for (int t = 0; t < SZ_TZ; t++) {
 		utcToLocal(tz[t]);
-		sprintf(dispTime[t], "%c%02d:%02d", day[t], ltime[HOUR], ltime[MINUTE]);
+		sprintf(dispTime[t], "%c%02d:%02d%c", day[t], ltime[HOUR], ltime[MINUTE], dst[t]);
 	}
 
 	if (refresh) {
