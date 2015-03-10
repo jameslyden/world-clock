@@ -206,7 +206,6 @@ void localToUtc(int tznum) {
 	if (isDst(tznum)) uhour--;
 
 	normalizeDateTime(&umin, &uhour, &udow, &uday, &umonth, &uyear);
-
 	time[MINUTE] = umin;
 	time[HOUR] = uhour;
 	time[DOW] = udow;
@@ -236,8 +235,19 @@ void utcToLocal(int tznum) {
 	if (isDst(tznum)) lhour++;
 
 
+	// isDst requires an up-to-date ltime, so normalize and dump before calling
 	normalizeDateTime(&lmin, &lhour, &ldow, &lday, &lmonth, &lyear);
+	ltime[MINUTE] = lmin;
+	ltime[HOUR] = lhour;
+	ltime[DOW] = ldow;
+	ltime[DAY] = lday;
+	ltime[MONTH] = lmonth;
+	ltime[YEAR] = lyear;
 
+	if (isDst(tznum)) lhour++;
+
+	// then again afterward in case the shift caused lhour to overflow
+	normalizeDateTime(&lmin, &lhour, &ldow, &lday, &lmonth, &lyear);
 	ltime[MINUTE] = lmin;
 	ltime[HOUR] = lhour;
 	ltime[DOW] = ldow;
@@ -310,22 +320,22 @@ bool isDst(int tznum) {
 	// return immediately if not a DST time zone
 	if (ds == DS_NONE) return false;
 
-	int m = time[MONTH], sm = DS_SMON[ds], fm = DS_FMON[ds], sd, fd;
+	int m = ltime[MONTH], sm = DS_SMON[ds], fm = DS_FMON[ds], sd, fd;
 
 	// if day of month provided, just use that...
 	if (DS_SDAY[ds]) sd = DS_SDAY[ds];
 	// otherwise, calculate start and end calendar days assuming we're in the right month
 	else {
-		int sdow = DS_SDOW[ds], syear = time[YEAR];
-		sd = ((time[DAY] - time[DOW] + sdow) % 7) + (7 * (DS_SWEEK[ds] - 1));
+		int sdow = DS_SDOW[ds], syear = ltime[YEAR];
+		sd = ((ltime[DAY] - ltime[DOW] + sdow) % 7) + (7 * (DS_SWEEK[ds] - 1));
 		if (sd < 1) normalizeDate(&sdow, &sd, &sm, &syear);
 	}
 
 	// ditto for finish day
 	if (DS_FDAY[ds]) fd = DS_FDAY[ds];
 	else {
-		int fdow = DS_FDOW[fd], fyear = time[YEAR];
-		fd = ((time[DAY] - time[DOW] + DS_FDOW[ds]) % 7) + (7 * (DS_FWEEK[ds] - 1));
+		int fdow = DS_FDOW[fd], fyear = ltime[YEAR];
+		fd = ((ltime[DAY] - ltime[DOW] + DS_FDOW[ds]) % 7) + (7 * (DS_FWEEK[ds] - 1));
 		if (fd < 1) normalizeDate(&fdow, &fd, &fm, &fyear);
 	}
 
@@ -335,8 +345,8 @@ bool isDst(int tznum) {
 		m += 12;
 	}
 	if (m < sm || m > fm) return false;
-	if (m == sm && time[DAY] < sd) return false; 
-	if (m == fm && time[DAY] > sd) return false; 
+	if (m == sm && ltime[DAY] < sd) return false; 
+	if (m == fm && ltime[DAY] > sd) return false; 
 
 	// at this point, it's not *not* DST, so return true
 	return true;
