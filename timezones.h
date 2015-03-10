@@ -19,8 +19,9 @@
  *   DS_FDAY	Numeric day of the month when DST finishes
  */
 
-// macro to simplify reading from PROGMEM arrays
-#define LOAD(x) pgm_read_word_near(x)
+// macros to simplify reading from PROGMEM arrays
+#define LOADBYTE(x) (byte)pgm_read_byte_near(x)
+#define LOADINT(x) (int)pgm_read_word_near(x)
 
 // timezone name macros
 #define TZ_ZULU	0
